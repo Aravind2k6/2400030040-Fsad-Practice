@@ -1,8 +1,8 @@
 package com.klu.service.Impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.klu.model.Student;
@@ -11,44 +11,44 @@ import com.klu.service.StudentService;
 
 @Service
 public class StudentServiceImpl implements StudentService {
-      @Autowired
-      private StudentRepo studentRepo;
 
-      @Override
-      public Student createStudent(Student student) {
-          return studentRepo.save(student);
-      }
+    @Autowired
+    private StudentRepo sr;
 
-      @Override
-      public Student getStudentById(int id) {
-          return studentRepo.findById(id).orElse(null);
-      }
+    @Override
+    public Student createStudent(Student student) {
+        return sr.save(student);
+    }
 
-      @Override
-      public List<Student> getAllStudents() {
-          return studentRepo.findAll();
-      }
+    @Override
+    public Page<Student> getAllStudents(int page, int size) {
+        return sr.findAll(PageRequest.of(page, size));
+    }
 
-      @Override
-      public Student updateStudent(int id, Student student) {
-          if (studentRepo.existsById(id)) {
-              student.setId(id);
-              return studentRepo.save(student);
-          }
-          return null;
-      }
+    @Override
+    public Student getStudentById(Long id) {
+        return sr.findById(id).orElse(null);
+    }
 
-      @Override
-      public String deleteStudent(int id) {
-          if (studentRepo.existsById(id)) {
-              studentRepo.deleteById(id);
-              return "Student deleted successfully";
-          }
-          return "Student not found";
-      }
+    @Override
+    public Page<Student> getStudentsByCourse(String course, int page, int size) {
+        return sr.findByCourse(course, PageRequest.of(page, size));
+    }
 
-      @Override
-      public List<Student> searchStudent(String name, String course) {
-          return studentRepo.findByNameIgnoreCaseAndCourseIgnoreCase(name, course);
-      }
+    @Override
+    public Student updateStudent(Long id, Student student) {
+        Student existing = sr.findById(id).orElse(null);
+
+        if (existing != null) {
+            existing.setName(student.getName());
+            existing.setCourse(student.getCourse());
+            return sr.save(existing);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteStudent(Long id) {
+        sr.deleteById(id);
+    }
 }

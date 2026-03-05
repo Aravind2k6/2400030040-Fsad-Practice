@@ -1,17 +1,9 @@
 package com.klu.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 
 import com.klu.model.Student;
 import com.klu.service.StudentService;
@@ -19,41 +11,60 @@ import com.klu.service.StudentService;
 @RestController
 @RequestMapping("/api")
 public class StudentController {
-  @Autowired
-  private StudentService service;
-  //create
-  @PostMapping("/student/add")
-  public Student createStudent(@RequestBody Student student){
-    return service.createStudent(student);
-  }
-  
-  //get all
-  @GetMapping("/student/getall")
-  public List<Student> getAllStudents(){
-    return service.getAllStudents();
-  }
-  
-  //get by id
-  @GetMapping("/student/getid/{id}")
-  public Student getStudentById(@PathVariable int id) {
-    return service.getStudentById(id);
-  }
-  //update
-  @PutMapping("/student/update/{id}")
-  public Student updateStudent(@PathVariable int id,@RequestBody Student student) {
-    return service.updateStudent(id, student);
-  }
-  
-  //delete
-  @DeleteMapping("/student/del/{id}")
-  public String deleteStudent(@PathVariable int id) {
-    return service.deleteStudent(id);
-  }
-  
-  //search
-  @GetMapping("/student/search")
-  public List<Student> searchStudent(@RequestParam String name,@RequestParam String course){
-    return service.searchStudent(name, course);
-  }
-  
+	@Autowired
+    private StudentService service;
+
+    // CREATE
+    @PostMapping("/student/add")
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        return new ResponseEntity<>(
+                service.createStudent(student),
+                HttpStatus.CREATED);
+    }
+
+    // READ ALL (Pagination)
+    @GetMapping("/student/getall")
+    public ResponseEntity<Page<Student>> getAllStudents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        return ResponseEntity.ok(
+                service.getAllStudents(page, size));
+    }
+
+    // READ BY ID
+    @GetMapping("/student/getbyid/{id}")
+    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                service.getStudentById(id));
+    }
+
+    // READ BY COURSE (JPQL)
+    @GetMapping("/student/course/{course}")
+    public ResponseEntity<Page<Student>> getByCourse(
+            @PathVariable String course,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        return ResponseEntity.ok(
+                service.getStudentsByCourse(course, page, size));
+    }
+
+    // UPDATE
+    @PutMapping("/student/update/{id}")
+    public ResponseEntity<Student> updateStudent(
+            @PathVariable Long id,
+            @RequestBody Student student) {
+
+        return ResponseEntity.ok(
+                service.updateStudent(id, student));
+    }
+
+    // DELETE
+    @DeleteMapping("/student/delete/{id}")
+    public ResponseEntity<String> deleteStudent(@PathVariable Long id) {
+
+        service.deleteStudent(id);
+        return ResponseEntity.ok("Student deleted successfully");
+    }
 }
