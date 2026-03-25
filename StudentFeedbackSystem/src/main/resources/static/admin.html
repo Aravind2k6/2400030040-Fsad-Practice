@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>Admin Dashboard - Feedback Records</header>
+
+<br>
+<button onclick="loadData()">Load All Feedback</button>
+<br><br>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Student</th>
+<th>Course</th>
+<th>Instructor</th>
+<th>Rating</th>
+<th>Comments</th>
+</tr>
+</thead>
+
+<tbody id="tableData"></tbody>
+</table>
+
+<script>
+async function loadData(){
+const res = await fetch("http://localhost:8080/all");
+const data = await res.json();
+
+let rows="";
+data.forEach(f=>{
+rows+=`<tr>
+<td>${f.id}</td>
+<td>${f.studentName}</td>
+<td>${f.course}</td>
+<td>${f.instructor}</td>
+<td>${f.rating}</td>
+<td>${f.comments}</td>
+</tr>`;
+});
+
+document.getElementById("tableData").innerHTML=rows;
+}
+</script>
+
+</body>
+</html>

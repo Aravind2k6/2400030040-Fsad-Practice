@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Feedback System</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>Student Feedback System</header>
+
+<div class="container">
+<h3>Submit Feedback</h3>
+
+<form id="feedbackForm">
+<input type="text" id="name" placeholder="Student Name" required>
+<input type="text" id="course" placeholder="Course Name" required>
+<input type="text" id="instructor" placeholder="Instructor Name" required>
+
+<select id="rating" required>
+<option value="">Select Rating</option>
+<option value="5">5 - Excellent</option>
+<option value="4">4 - Good</option>
+<option value="3">3 - Average</option>
+<option value="2">2 - Poor</option>
+<option value="1">1 - Bad</option>
+</select>
+
+<textarea id="comments" placeholder="Enter feedback"></textarea>
+
+<button type="submit">Submit Feedback</button>
+</form>
+
+<br>
+<a href="admin.html">Go to Admin Dashboard</a>
+</div>
+
+<script>
+document.getElementById("feedbackForm").addEventListener("submit", async function(e){
+e.preventDefault();
+
+const data={
+studentName: document.getElementById("name").value,
+course: document.getElementById("course").value,
+instructor: document.getElementById("instructor").value,
+rating: document.getElementById("rating").value,
+comments: document.getElementById("comments").value
+};
+
+await fetch("http://localhost:8080/submit",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+});
+
+alert("✅ Feedback Submitted & Stored in Database");
+document.getElementById("feedbackForm").reset();
+});
+</script>
+
+</body>
+</html>

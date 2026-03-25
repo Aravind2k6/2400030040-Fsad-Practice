@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.klu.model.Student;
 import com.klu.service.StudentService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api")
 public class StudentController {
