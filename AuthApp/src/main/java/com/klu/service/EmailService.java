@@ -11,14 +11,17 @@ import jakarta.mail.internet.MimeMessage;
 public class EmailService {
 	@Autowired
 	private JavaMailSender mailSender;
-	public void sendOtp(String to,String otp) throws Exception{
-         MimeMessage message = mailSender.createMimeMessage();
-         MimeMessageHelper helper = new MimeMessageHelper(message);
-         
-         helper.setTo(to);
-	     helper.setSubject("OTP Verification");
-	     helper.setText("Your OTP is: " + otp);
-	     
-	     mailSender.send(message);
-}
+	
+	public void sendOtp(String to, String otp) throws Exception {
+		MimeMessage message = mailSender.createMimeMessage();
+
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setTo(to);
+        helper.setFrom("aravindnelavelli@gmail.com");
+        helper.setSubject("OTP Verification");
+        helper.setText("Your OTP is: " + otp);
+
+        mailSender.send(message);
+	}
 }
